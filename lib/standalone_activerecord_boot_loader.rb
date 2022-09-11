@@ -70,9 +70,9 @@ module StandaloneActiverecordBootLoader
       end
 
       config = ActiveRecord::DatabaseConfigurations::HashConfig.new(@env, 'primary', database_config[@env])
-      return database_config[@env] unless config.respond_to?(:merge)
+      return config if config.respond_to?(:configuration_hash)
 
-      config
+      database_config[@env]
     end
   end
 end
