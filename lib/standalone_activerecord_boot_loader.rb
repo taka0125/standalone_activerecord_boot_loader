@@ -38,17 +38,10 @@ module StandaloneActiverecordBootLoader
     end
 
     def create_database
-      conn_spec = database_config[@env]
-
-      # ActiveRecord 6系以降
-      if defined?(ActiveRecord::DatabaseConfigurations::HashConfig)
-        conn_spec = ActiveRecord::DatabaseConfigurations::HashConfig.new(@env, 'primary', conn_spec)
-      end
-
-      tasks = ActiveRecord::Tasks::MySQLDatabaseTasks.new(conn_spec)
+      tasks = ActiveRecord::Tasks::MySQLDatabaseTasks.new(build_database_config)
       begin
         tasks.create
-      rescue => e
+      rescue StandardError => e
         # ActiveRecord 5系
         if defined?(ActiveRecord::Tasks::DatabaseAlreadyExists)
           return if e.instance_of?(ActiveRecord::Tasks::DatabaseAlreadyExists)
@@ -69,6 +62,17 @@ module StandaloneActiverecordBootLoader
 
     def database_config
       @database_config ||= YAML::load(ERB.new(File.read(database_yml_path)).result)
+    end
+
+    def build_database_config
+      unless defined?(ActiveRecord::DatabaseConfigurations::HashConfig)
+        return database_config[@env]
+      end
+
+      config = ActiveRecord::DatabaseConfigurations::HashConfig.new(@env, 'primary', database_config[@env])
+      return database_config[@env] unless config.respond_to?(:merge)
+
+      config
     end
   end
 end
