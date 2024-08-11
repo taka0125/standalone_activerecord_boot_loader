@@ -11,7 +11,8 @@ Gem::Specification.new do |spec|
   spec.summary       = "ActiveRecordを単体で動かす時に使う起動処理"
   spec.description   = "ActiveRecordを単体で動かす時に使う起動処理"
   spec.homepage      = "https://github.com/taka0125/standalone_activerecord_boot_loader"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.license       = "MIT"
+  spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
